@@ -220,14 +220,24 @@ class Cube:
     def set_tmp(self,val):
         self.temp = val
 def main():
-    win = pygame.display.set_mode((540,600)) #背景
+    win = pygame.display.set_mode((540,600)) #window
+    width = 540
+    height = 600
     pygame.display.set_caption("sudoku")
-    board = Grid(9,9,540,540,win)
+    board = Grid(9,9,540,540,win) 
     win.fill((255,255,255))
+    fnt_80 = pygame.font.SysFont("comicsans",80)
+    fnt_40 = pygame.font.SysFont("comicsans",40)
+    text_title = fnt_80.render("Sudoku",1,(0,0,0))
+    text_start = fnt_40.render("Start",1,(0,0,0))
+    win.blit(text_start,(width/2-30,410))
+    win.blit(text_title, (width/2-100,200))
+    pygame.draw.rect(win,(0,0,0),(width/2-100,400,200,50),3)
     key = None
     run = True
+    game = False
     start = time.time()
-    board.show()
+    #board.show()
     ##board.set_problem()
     while run:
         #play_time = round(time.time()-start)
@@ -235,7 +245,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN and game == True:
                 if event.key == pygame.K_1:
                     key=1
                 if event.key == pygame.K_2:
@@ -264,13 +274,13 @@ def main():
                     print("board,selected",i,j)
                     board.place(i,j,key)
                     key = 0
-            if event.type ==  pygame.MOUSEBUTTONDOWN:
+            if event.type ==  pygame.MOUSEBUTTONDOWN and game == True:
                 if board.selected:
                     board.clean_choice()
                 pos = pygame.mouse.get_pos()#找到座標
-                print("pos",pos)
+                #print("pos",pos)
                 clicked = board.click(pos)
-                print("clicked",clicked)
+                #print("clicked",clicked)
                 #print(type(clicked[1]))
                 if clicked:
                     board.select(clicked[0],clicked[1])
@@ -278,7 +288,22 @@ def main():
             if key!=0 and key!=None  and board.selected != None: #temp -> gray
                 board.cube[board.selected[0]][board.selected[1]].temp = key
                 board.cube[board.selected[0]][board.selected[1]].draw(win)
-        
+            if event.type == pygame.MOUSEBUTTONDOWN and game == False:
+                pos = pygame.mouse.get_pos()
+                if pos[0]>width/2-100 and pos[0]<width/2+100:
+                    if pos[1]>400 and pos[1]<450:
+                        win.fill((255,255,255))
+                        game = True
+                        board.show()
+        poss = pygame.mouse.get_pos()     
+        if (poss[0]>width/2-100 and poss[0]<width/2+100) and(poss[1]>400 and poss[1]<450) and game == False:
+            pygame.draw.rect(win,(128,128,128),(width/2-100,400,200,50),3)
+            text_start = fnt_40.render("Start",1,(128,128,128))
+            win.blit(text_start,(width/2-30,410))
+        elif( not (poss[0]>width/2-100 and poss[0]<width/2+100) or not (poss[1]>400 and poss[1]<450) )and game ==False:
+            pygame.draw.rect(win,(0,0,0),(width/2-100,400,200,50),3)
+            text_start = fnt_40.render("Start",1,(0,0,0))
+            win.blit(text_start,(width/2-30,410))
         pygame.display.update()
         
 main()

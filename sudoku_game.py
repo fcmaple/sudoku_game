@@ -139,20 +139,27 @@ class Grid:
                     value = 0
                     print(i,j,value)
                     while(self.solve(i,j,value)==False):
-                        tmp = self.lst.pop()
-                        i = tmp[0]
-                        j = tmp[1]
-                        value = tmp[2]+1
-                        self.cube[i][j].set(0)
-                        self.cube[i][j].draw(self.win)
-                        pygame.display.update()
-                        pygame.time.delay(10)
-                        #print("tmp ",i,j,value)
+                        if self.lst!=[]:
+                            tmp = self.lst.pop()
+                            i = tmp[0]
+                            j = tmp[1]
+                            value = tmp[2]+1
+                            self.cube[i][j].set(0)
+                            self.cube[i][j].draw(self.win)
+                            pygame.display.update()
+                            pygame.time.delay(10)
+                        else:
+                            self.reset()
+                            return False
                 i=i+1
             j=j+1
             i=0
         return False
-
+    def reset(self):
+        self.cube = [[Cube(self.board[i][j],i,j,self.height,self.width)for i in range(self.col)]for j in range(self.row)]
+        for i in range(self.row):
+            for j in range(self.col):
+                self.cube[i][j].draw(self.win)
     def solve_problem(self):
         find = self.find_empty() 
         if find ==False:
